@@ -1,80 +1,76 @@
-let createEmployeeRecord = function(row){
+function createEmployeeRecord(employeeRecord) {
     return {
-        firstName: row[0],
-        familyName: row[1],
-        title: row[2],
-        payPerHour: row[3],
-        timeInEvents: [],
-        timeOutEvents: []
-    }
-}
-let createEmployeeRecords = function(employeeRowData) {
-    return employeeRowData.map(function(row){
-        return createEmployeeRecord(row)
-    })
-}
-let createTimeInEvent = function(dateStamp){
-    let [date, hour] = dateStamp.split(' ')
-    this.timeInEvents.push({
-        type: "TimeIn",
-        hour: parseInt(hour, 10),
-        date,
-    })
-    return this
-}
-let createTimeOutEvent = function(dateStamp){
-    let [date, hour] = dateStamp.split(' ')
-    this.timeOutEvents.push({
-        type: "TimeOut",
-        hour: parseInt(hour, 10),
-        date,
-    })
-    return this
-}
-let hoursWorkedOnDate = function(soughtDate){
-    let inEvent = this.timeInEvents.find(function(e){
-        return e.date === soughtDate
-    })
-    let outEvent = this.timeOutEvents.find(function(e){
-        return e.date === soughtDate
-    })
-    return (outEvent.hour - inEvent.hour) / 100
-}
-let wagesEarnedOnDate = function(dateSought){
-    let rawWage = hoursWorkedOnDate.call(this, dateSought)
-        * this.payPerHour
-    return parseFloat(rawWage.toString())
-}
-let allWagesFor = function(){
-    let eligibleDates = this.timeInEvents.map(function(e){
-        return e.date
-    })
-    let payable = eligibleDates.reduce(function(memo, d){
-        return memo + wagesEarnedOnDate.call(this, d)
-    }.bind(this), 0)
-    return payable
-}
-let findEmployeeByFirstName = function(srcArray, firstName) {
-  return srcArray.find(function(rec){
-    return rec.firstName === firstName
-  })
-}
-let calculatePayroll = function(arrayOfEmployeeRecords){
-    return arrayOfEmployeeRecords.reduce(function(memo, rec){
-        return memo + allWagesFor.call(rec)
-    }, 0)
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      firstName: employeeRecord[0],
+      familyName: employeeRecord[1],
+      title: employeeRecord[2],
+      payPerHour: employeeRecord[3],
+      timeInEvents: [],
+      timeOutEvents: [],
+    };
+  }
+  function createEmployeeRecords(employeesArray) {
+    const employeesRecords = [];
+    employeesArray.map((employeeArray) => {
+      const employeeRecord = createEmployeeRecord(employeeArray);
+      employeesRecords.push(employeeRecord);
+    });
+    return employeesRecords;
+  }
+  function createTimeInEvent(employeeRecord, timeInStamp) {
+    const time = timeInStamp.split(" ");
+    const date = time[0];
+    const hour = parseInt(time[1]);
+    employeeRecord.timeInEvents.push({
+      type: "TimeIn",
+      hour: hour,
+      date: date,
+    });
+    return employeeRecord;
+  }
+  function createTimeOutEvent(employeeRecord, timeOutStamp) {
+    const time = timeOutStamp.split(" ");
+    const date = time[0];
+    const hour = parseInt(time[1]);
+    employeeRecord.timeOutEvents.push({
+      type: "TimeOut",
+      hour: hour,
+      date: date,
+    });
+    return employeeRecord;
+  }
+  function hoursWorkedOnDate(employeeRecord, date) {
+    const timeIn = employeeRecord.timeInEvents.find(function (e) {
+      return e.date === date;
+    });
+    const timeOut = employeeRecord.timeOutEvents.find(function (e) {
+      return e.date === date;
+    });
+    return (timeOut.hour - timeIn.hour) / 100;
+  }
+  function wagesEarnedOnDate(employeeRecord, date) {
+    const Wage =
+      hoursWorkedOnDate(employeeRecord, date) * employeeRecord.payPerHour;
+    return Wage;
+  }
+  function allWagesFor(employeeRecord) {
+    const eligibleDates = employeeRecord.timeInEvents.map(function (e) {
+      return e.date;
+    });
+    const payable = eligibleDates.reduce(function (memo, d) {
+      return memo + wagesEarnedOnDate(employeeRecord, d);
+    }, 0);
+    return payable;
+  }
+  function calculatePayroll(employeesRecords) {
+    return employeesRecords.reduce(function (memo, rec) {
+      return memo + allWagesFor(rec);
+    }, 0);
+  }
+  
+  
+  
+  
+  
+  
+  
+  
